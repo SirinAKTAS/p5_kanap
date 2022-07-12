@@ -31,7 +31,9 @@ function displayProductData(products){
             description.textContent = `${product.description}`;
         }
         for(let couleur of product.colors){
-            couleurOption.innerHTML += `<option value="${couleur}">${couleur}</option>`;
+            if(id === product._id){
+                couleurOption.innerHTML += `<option value="${couleur}">${couleur}</option>`;
+            }
         }
     }
 }
