@@ -91,7 +91,13 @@
 	box-shadow: rgba(42, 18, 206, 0.9) 0 0 22px 6px;
 }
 
-
+button:disabled{
+	background-color: #1E90FF;
+}
+button:disabled:hover{
+	cursor: auto;
+	box-shadow: none;
+}
 
 
 
