@@ -46,87 +46,8 @@ function localStorageGet(key) {
 
 
 /**
- * 
- * On ajoute le produit au panier
- * 
- */
-function addProduct(product){
-    let cart = localStorageGet();
-    let foundProduct = cart.find(p => p.id == product.id);
-    if (foundProduct != undefined){
-        foundProduct.quantity++;
-    } else {
-        product.quantity = 1;
-        cart.push(product);
-    }
-    localStorageSave(key, value);
-}
-
-
-/**
- * 
- * On supprime le produit du panier
- * 
- */
-function removeFromCart(product){
-    let cart = localStorageGet();
-    cart = cart.filter(p => p.id != product.id);
-    localStorageSave(key, value);
-}
-
-
-/**
- * 
- * On modifie la quantity d'un produit du panier
- * 
- */
-function changeQuantityFromCart(product){
-    let cart = localStorageGet();
-    let foundProduct = cart.find(p => p.id == product.id);
-    if (foundProduct != undefined){
-        foundProduct.quantity += quantity;
-        if(foundProduct.quantity <= 0){
-            removeFromCart(product);
-        } else {
-            localStorageSave(key, value);
-        }
-    }
-}
-
-
-/**
- * 
- * On récupère le nombre de produit dans le panier 
- * 
- */
-function getNumberOfProduct(){
-    let cart = localStorageGet();
-    let number = 0;
-    for (let product of cart){
-        number += product.quantity;
-    }
-    return number;
-}
-
-
-/**
- * 
- * On calcule le prix total
- * 
- */
-function getTotalPrice(){
-    let cart = localStorageGet();
-    let total = 0;
-    for (let product of cart){
-        total += product.quantity * product.price;
-    }
-    return total;
-}
-
-
-/**
  *
  * On exporte les fonctions
  *
  */
-export { localStorageHas, localStorageSave, localStorageGet, addProduct, getNumberOfProduct, getTotalPrice, changeQuantityFromCart, removeFromCart, };
+export { localStorageHas, localStorageSave, localStorageGet };
