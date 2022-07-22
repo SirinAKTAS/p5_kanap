@@ -1,14 +1,3 @@
-fetch("http://localhost:3000/api/products")
-    .then(function(res) {
-        if (res.ok) {
-            return res.json();
-        }
-    })
-    .then(function(products) {
-        console.log(products);
-        displayCartProducts(products);
-    })
-    .catch(function(err) {
-        // Une erreur est survenue
-    });
-
+import { localStorageHas, localStorageSave, localStorageGet,  addProduct, getNumberOfProduct, getTotalPrice, changeQuantityFromCart, removeFromCart, } from './localstorage.js';
+const params = new URLSearchParams(window.location.search);
+const id = params.get('_id');
