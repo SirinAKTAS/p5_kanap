@@ -1,5 +1,3 @@
-import { localStorageHas, localStorageSave, localStorageGet } from './localstorage.js';
-
 const key = 'Products';
 const params = new URLSearchParams(window.location.search);
 const id = params.get('_id');
@@ -49,7 +47,7 @@ function init() {
     button.addEventListener('click', () => {
         let object = {
             id: id,
-            quantity: itemQuantity.value,
+            quantity: Number(itemQuantity.value),
             colors: colors.value,
             price: Number(price.innerHTML),
         }
@@ -75,28 +73,22 @@ function displayProductData(product) {
 }
 
 function processLocalStorage(object) {
-    if (localStorageHas(key)) {
-        const localStorageValue = localStorageGet(key);
+    let cart = JSON.parse(localStorage.getItem(key));
+    console.log(cart);
+    //const sortedArray = Array.from(cart).find(product => product.id === object.id);
 
-        // Lorsqu'on ajoute un produit au panier, si celui-ci était déjà présent dans le panier (même id + même couleur), on incrémente la quantité du produit correspondant dans l'array
-        const sortedArray = localStorageValue.find(product => product.id === object.id);
+    if (cart != undefined) {
 
-        // TODO
-        // Mettre à jour la quantité dans le LS (if)
-        // Mettre à jour la valeur courante en mémoire avec le nouvel object que l'on veut insérer (else)
-        if (sortedArray) {
-            // object.quantity
-        } else {
-            // push
-        }
-
-        console.log(object);
-        console.log(localStorageValue);
-        console.log(object.id);
+        cart.push(object);
+        localStorage.setItem(key, JSON.stringify(cart));
     } else {
-        // Ajouter l'objet dans le LS
-        localStorageSave(key, [object]);
+        cart = [];
+        cart.push(object);
+        localStorage.setItem(key, JSON.stringify(cart));
     }
+
+    console.log(object);
+    console.log(object.id);
 }
 
 init();
