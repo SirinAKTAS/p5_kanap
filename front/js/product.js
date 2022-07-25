@@ -72,17 +72,25 @@ function displayProductData(product) {
     }
 }
 
+function getCart(){
+    let cart = localStorage.getItem(key);
+    if (cart == null) {
+        return [];
+    } else {
+        return JSON.parse(cart);
+    }
+}
+
 function processLocalStorage(object) {
-    let cart = JSON.parse(localStorage.getItem(key));
-    console.log(cart);
-    //const sortedArray = Array.from(cart).find(product => product.id === object.id);
+    let cart = getCart();
+    let sortedArray = Array.from(cart).find(product => product.id === object.id && product.colors === object.colors);
+    const quantityChoose = object.quantity;
+    console.log(quantityChoose);
 
-    if (cart != undefined) {
-
-        cart.push(object);
+    if (cart && sortedArray) {
+        sortedArray.quantity += object.quantity;
         localStorage.setItem(key, JSON.stringify(cart));
     } else {
-        cart = [];
         cart.push(object);
         localStorage.setItem(key, JSON.stringify(cart));
     }
