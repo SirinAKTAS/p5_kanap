@@ -1,6 +1,8 @@
-// ************* Affichage Produit ***********
 let cart = JSON.parse(localStorage.getItem("Products"));
 console.log(cart);
+
+// ************* Affichage Produit ***********
+
 const zoneProducts = document.getElementById('cart__items');
 const cartPageName = document.getElementById('cartPageName');
 
@@ -15,21 +17,11 @@ if(cart === null){
 
 
 
-
-
-
-
-
-
-
-
-
-
 // *************** Formulaire ***************/
 
 let form = document.querySelector('#formOrder');
-
 // **************** Validation Prenom ****************
+
 
 form.firstName.addEventListener('change', function() {
     validFirstName(this);

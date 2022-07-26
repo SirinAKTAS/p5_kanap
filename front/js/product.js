@@ -7,7 +7,6 @@ function init() {
     const colors = document.getElementById('colors');
     const button = document.getElementById('addToCart');
     const itemQuantity = document.getElementById('quantity');
-    const price = document.getElementById('price');
 
     fetch(`http://localhost:3000/api/products/${id}`)
         .then(function(res) {
@@ -49,7 +48,6 @@ function init() {
             id: id,
             quantity: Number(itemQuantity.value),
             colors: colors.value,
-            price: Number(price.innerHTML),
         }
 
         processLocalStorage(object);
