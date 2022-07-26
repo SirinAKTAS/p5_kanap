@@ -45,7 +45,7 @@
     <main class="limitedWidthBlockContainer">
       <div class="limitedWidthBlock" id="limitedWidthBlock">
         <div class="cartAndFormContainer" id="cartAndFormContainer">
-          <h1>Votre panier</h1>
+          <h1 id="cartPageName"></h1>
           <section class="cart">
             <section id="cart__items">
              <!--  <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
@@ -74,11 +74,11 @@
               <p>Total (<span id="totalQuantity"><!-- 2 --></span> articles) : <span id="totalPrice"><!-- 84,00 --></span> €</p>
             </div>
             <div class="cart__order">
-              <form method="get" class="cart__order__form">
+              <form method="post" class="cart__order__form" id="formOrder">
                 <div class="cart__order__form__question">
                   <label for="firstName">Prénom: </label>
                   <input type="text" name="firstName" id="firstName" required>
-                  <p id="firstNameErrorMsg"><!-- ci est un message d'erreur --></p>
+                  <p id="firstNameErrorMsg"></p>
                 </div>
                 <div class="cart__order__form__question">
                   <label for="lastName">Nom: </label>

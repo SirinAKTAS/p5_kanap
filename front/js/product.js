@@ -53,6 +53,7 @@ function init() {
         }
 
         processLocalStorage(object);
+        alert('Votre article a été ajouté au panier avec succès')
     });
 }
 

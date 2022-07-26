@@ -112,7 +112,6 @@ h2 {
 }
 .cart__order__form__question p {
 	margin: 0;
-	color: #fbbcbc;
 	font-size: 15px;
 	margin-left: 8px;
 }
@@ -134,7 +133,13 @@ h2 {
 	box-shadow: rgb(42 18 206 / 90%) 0 0 22px 6px;
 }
 
+.msg-valide {
+	color: #90EE90;
+}
 
+.msg-invalide {
+	color: red;
+}
 
 /***************/
 /*Media queries*/
