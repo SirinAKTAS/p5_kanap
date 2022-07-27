@@ -1,6 +1,5 @@
 const key = 'Products';
 let cart = JSON.parse(localStorage.getItem(key));
-const productList = fetch('http://localhost:3000/api/products');
 console.log(cart);
 
 // ************* Affichage Produit ***********
@@ -16,7 +15,6 @@ if(cart === null){
 } else {
     let cartStructure = [];
     let i = Number;
-    productList;
     for ( i = 0; i < cart.length; i++ ){
         cartStructure = cartStructure + ` <article class="cart__item" data-id="${cart[i].id}" data-color="${cart[i].colors}">
         <div class="cart__item__img">
