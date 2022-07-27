@@ -1,16 +1,55 @@
-let cart = JSON.parse(localStorage.getItem("Products"));
+const key = 'Products';
+let cart = JSON.parse(localStorage.getItem(key));
+const productList = fetch('http://localhost:3000/api/products');
 console.log(cart);
 
 // ************* Affichage Produit ***********
 
 const zoneProducts = document.getElementById('cart__items');
-const cartPageName = document.getElementById('cartPageName');
 
 if(cart === null){
-    cartPageName.innerHTML = "Votre panier est vide, merci d'ajouter au moins un kanap.";
+    const emptyCart = ` 
+    <div class="cartAndFormContainer">
+    <h2>Votre panier est vide, merci d'ajouter au moins un article pour qu'on puisse passer à la commande.</h2>
+    </div>`
+    zoneProducts.innerHTML = emptyCart;
 } else {
-    cartPageName.innerHTML = "Votre panier"
-}
+    let cartStructure = [];
+    let i = Number;
+    productList;
+    for ( i = 0; i < cart.length; i++ ){
+        cartStructure = cartStructure + ` <article class="cart__item" data-id="${cart[i].id}" data-color="${cart[i].colors}">
+        <div class="cart__item__img">
+          <img src="${cart[i].imageUrl}" alt="${cart[i].altTxt}">
+        </div>
+        <div class="cart__item__content">
+          <div class="cart__item__content__description">
+            <h2>${cart[i].name}</h2>
+            <p>${cart[i].colors}</p>
+            <p>${cart[i].price} €</p>
+          </div>
+          <div class="cart__item__content__settings">
+            <div class="cart__item__content__settings__quantity">
+              <p>Qté : </p>
+              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cart[i].quantity}">
+            </div>
+            <div class="cart__item__content__settings__delete">
+              <p class="deleteItem">Supprimer</p>
+            </div>
+          </div>
+        </div>
+      </article> `;
+    console.log(cart[i].id);
+    console.log(cart[i].colors);
+    console.log(i);
+    }
+
+    if ( i === cart.length) {
+        zoneProducts.innerHTML = cartStructure;
+    }
+
+
+};
 
 
 
