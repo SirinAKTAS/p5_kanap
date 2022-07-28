@@ -7,6 +7,7 @@ function init() {
     const colors = document.getElementById('colors');
     const button = document.getElementById('addToCart');
     const itemQuantity = document.getElementById('quantity');
+    const productName = document.getElementById('title');
 
     fetch(`http://localhost:3000/api/products/${id}`)
         .then(function(res) {
@@ -48,11 +49,17 @@ function init() {
             id: id,
             quantity: Number(itemQuantity.value),
             colors: colors.value,
+            name: productName.innerHTML,
         }
 
         processLocalStorage(object);
-        alert('Votre article a été ajouté au panier avec succès')
-    });
+        if ( confirm( "Votre Kanap a bien été ajouté au panier, appuyer sur <OK> pour accéder au panier ou sur <ANNULER> pour continuer la visite !" ) ) {
+            // Code à éxécuter si le l'utilisateur clique sur "OK"
+            document.location.href="./cart.html"; 
+        } else {
+            // Code à éxécuter si l'utilisateur clique sur "Annuler" 
+            return;
+        }    });
 }
 
 function displayProductData(product) {
