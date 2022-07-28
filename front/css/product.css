@@ -92,7 +92,7 @@
 }
 
 button:disabled{
-	background-color: #1E90FF;
+	background-color: #A9A9A9;
 }
 button:disabled:hover{
 	cursor: auto;

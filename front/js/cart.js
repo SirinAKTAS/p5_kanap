@@ -193,3 +193,5 @@ const validEmail = function() {
     }
 };
 
+
+// **************** Passer la commande ******************
