@@ -16,6 +16,7 @@ function init() {
             }
         })
         .then(function(product) {
+            console.log(product);
             displayProductData(product);
         })
         .catch(function(err){
@@ -54,10 +55,8 @@ function init() {
 
         processLocalStorage(object);
         if ( confirm( "Votre Kanap a bien été ajouté au panier, appuyer sur <OK> pour accéder au panier ou sur <ANNULER> pour continuer la visite !" ) ) {
-            // Code à éxécuter si le l'utilisateur clique sur "OK"
             document.location.href="./cart.html"; 
         } else {
-            // Code à éxécuter si l'utilisateur clique sur "Annuler" 
             return;
         }    });
 }

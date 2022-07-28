@@ -16,15 +16,31 @@ if(cart === null){
     let cartStructure = [];
     let i = Number;
     for ( i = 0; i < cart.length; i++ ){
+
+        fetch("http://localhost:3000/api/products")
+        .then(function(res) {
+            if(res.ok){
+                return res.json();
+            }
+        })
+        .then(function(product) {
+            console.log(product);
+            displayProductData(product);
+        })
+        .catch(function(err){
+            // Une erreur est survenue
+        });
+
+
         cartStructure = cartStructure + ` <article class="cart__item" data-id="${cart[i].id}" data-color="${cart[i].colors}">
         <div class="cart__item__img">
-          <img src="${cart[i].imageUrl}" alt="${cart[i].altTxt}">
+          <img src="" alt="">
         </div>
         <div class="cart__item__content">
           <div class="cart__item__content__description">
             <h2>${cart[i].name}</h2>
             <p>${cart[i].colors}</p>
-            <p>${cart[i].price}</p>
+            <p id="productPrice"></p>
           </div>
           <div class="cart__item__content__settings">
             <div class="cart__item__content__settings__quantity">
@@ -37,6 +53,7 @@ if(cart === null){
           </div>
         </div>
       </article> `;
+    
     console.log(cart[i].id);
     console.log(cart[i].colors);
     console.log(i);
@@ -50,9 +67,14 @@ if(cart === null){
 };
 
 
+function displayProductData(product) {
+    let imageAlt = document.querySelector("article div.cart__item__img");
+    let productPrice = document.getElementById('productPrice');
 
+    imageAlt.innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
+    productPrice.textContent = `${product.price}`;
 
-
+}
 
 // *************** Formulaire ***************/
 
