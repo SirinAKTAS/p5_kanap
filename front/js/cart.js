@@ -195,3 +195,30 @@ const validEmail = function() {
 
 
 // **************** Passer la commande ******************
+
+
+function postForm (){
+    const buttonOrder = document.getElementById('order');
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+    const address = document.getElementById('address');
+    const city = document.getElementById('city');
+    const email = document.getElementById('email');
+
+    let contact = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+      };
+    
+/**    buttonOrder.addEventListener('click', () => {
+ 
+    }) 
+**/
+}
+
+
+
+
