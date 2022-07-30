@@ -8,6 +8,7 @@ function init() {
     const button = document.getElementById('addToCart');
     const itemQuantity = document.getElementById('quantity');
     const productName = document.getElementById('title');
+    const description = document.getElementById('description');
 
     fetch(`http://localhost:3000/api/products/${id}`)
         .then(function(res) {
@@ -46,19 +47,21 @@ function init() {
     });
 
     button.addEventListener('click', () => {
+        const image = document.getElementById('image');
+
         let object = {
             id: id,
             quantity: Number(itemQuantity.value),
             colors: colors.value,
             name: productName.innerHTML,
+            description: description.innerHTML,
+            imageUrl: image.src,
+            altTxt: image.alt
         }
 
         processLocalStorage(object);
-        if ( confirm( "Votre Kanap a bien été ajouté au panier, appuyer sur <OK> pour accéder au panier ou sur <ANNULER> pour continuer la visite !" ) ) {
-            document.location.href="./cart.html"; 
-        } else {
-            return;
-        }    });
+        alert('Votre Kanap a bien été ajouté au panier !');
+    });
 }
 
 function displayProductData(product) {
@@ -67,7 +70,7 @@ function displayProductData(product) {
     let description = document.getElementById('description');
     let price = document.getElementById('price');
 
-    imageAlt.innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
+    imageAlt.innerHTML = `<img id="image" src="${product.imageUrl}" alt="${product.altTxt}">`;
     title.textContent = `${product.name}`;
     price.textContent = `${product.price}`;
     description.textContent = `${product.description}`;

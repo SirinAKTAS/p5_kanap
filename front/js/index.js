@@ -12,10 +12,12 @@ fetch("http://localhost:3000/api/products")
         // Une erreur est survenue
     });
 
-function displayProducts(products){
+function displayProducts(products) {
+    let content =  '';
     let zoneProducts = document.getElementById('items');
+
     for (let product of products) {
-        zoneProducts.innerHTML += `<a href="./product.html?_id=${product._id}">
+        content += `<a href="./product.html?_id=${product._id}">
         <article>
           <img src="${product.imageUrl}" alt="${product.altTxt}">
           <h3 class="productName">${product.name}</h3>
@@ -23,5 +25,6 @@ function displayProducts(products){
         </article>
       </a>`;
     }
-}
 
+    zoneProducts.innerHTML = content;
+}
