@@ -6,7 +6,7 @@ console.log(cart);
 
 const zoneProducts = document.getElementById('cart__items');
 
-if(!cart){
+if(!cart || cart == 0){
     zoneProducts.innerHTML = ` 
         <div class="cartAndFormContainer">
             <h2>Votre panier est vide, merci d'ajouter au moins un article pour qu'on puisse passer à la commande.</h2>
@@ -31,7 +31,7 @@ if(!cart){
                   <div class="cart__item__content__description">
                     <h2>${cart[i].name}</h2>
                     <p>${cart[i].colors}</p>
-                    <p>${results[i].price}€</p>
+                    <p>${results[i].price} €</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -49,6 +49,62 @@ if(!cart){
 
     zoneProducts.innerHTML = cartStructure;
 }
+
+
+// ******************* Supprimer un Kanap du panier ***************
+let deleteButton = document.querySelectorAll('.deleteItem');
+console.log(deleteButton);
+
+for (let k = 0; k < deleteButton.length; k++){
+
+    deleteButton[k].addEventListener("click", (e) => {
+        e.preventDefault();
+
+        let deleteById = cart[k].id;
+        let deleteByColors = cart[k].colors;
+        console.log(deleteById);
+        console.log(deleteByColors);
+        
+        cart = cart.filter( kanap => kanap.id !== deleteById || kanap.colors !== deleteByColors);
+        console.log(cart);
+
+        localStorage.setItem(key, JSON.stringify(cart));
+        alert('Votre Kanap a bien été supprimé !');
+        window.location.href = "cart.html";
+    })
+};
+
+
+
+
+
+// ******************* Modifier la quantité depuis le panier ******************
+
+
+
+
+
+
+// ******************* Avoir le prix total du panier ***********************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // *************** Formulaire ***************/
 
@@ -179,16 +235,16 @@ function postForm (){
     const city = document.getElementById('city');
     const email = document.getElementById('email');
 
-    let contact = {
-        firstName: firstName.value,
-        lastName: lastName.value,
-        address: address.value,
-        city: city.value,
-        email: email.value
-    };
+  
 
     /**    buttonOrder.addEventListener('click', () => {
-
+                let contact = {
+                    firstName: firstName.value,
+                    lastName: lastName.value,
+                    address: address.value,
+                    city: city.value,
+                    email: email.value
+                };
     })
      **/
 }
