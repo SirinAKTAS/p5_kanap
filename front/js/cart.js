@@ -96,7 +96,7 @@ let getCartTotalPrice = [];
 
 for ( let j = 0; j < cart.length; j++ ){
 
-    let cartPrice = results[j].price;
+    let cartPrice = results[j].price*cart[j].quantity;
     getCartTotalPrice.push(cartPrice);
     console.log(cartPrice);
 }
