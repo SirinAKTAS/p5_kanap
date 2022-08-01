@@ -5,6 +5,12 @@ console.log(cart);
 // ************* Affichage Produit ***********
 
 const zoneProducts = document.getElementById('cart__items');
+const arrayIds = cart.map(product => product.id);
+
+// On a besoin de récupérer la donnée des éléments situés dans le panier
+let results = await Promise.all(
+    arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
+);
 
 if(!cart || cart == 0){
     zoneProducts.innerHTML = ` 
@@ -14,12 +20,7 @@ if(!cart || cart == 0){
     `;
 } else {
     let cartStructure = '';
-    const arrayIds = cart.map(product => product.id);
 
-    // On a besoin de récupérer la donnée des éléments situés dans le panier
-    let results = await Promise.all(
-        arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
-    );
 
     for (let i = 0; i < cart.length; i++) {
         cartStructure += `
@@ -31,7 +32,7 @@ if(!cart || cart == 0){
                   <div class="cart__item__content__description">
                     <h2>${cart[i].name}</h2>
                     <p>${cart[i].colors}</p>
-                    <p>${results[i].price} €</p>
+                    <p>${results[i].price*cart[i].quantity} €</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -80,6 +81,9 @@ for (let k = 0; k < deleteButton.length; k++){
 
 // ******************* Modifier la quantité depuis le panier ******************
 
+let itemQuantity = document.querySelectorAll('.itemQuantity');
+console.log(itemQuantity);
+
 
 
 
@@ -88,16 +92,25 @@ for (let k = 0; k < deleteButton.length; k++){
 // ******************* Avoir le prix total du panier ***********************
 
 
+let getCartTotalPrice = [];
+
+for ( let j = 0; j < cart.length; j++ ){
+
+    let cartPrice = results[j].price;
+    getCartTotalPrice.push(cartPrice);
+    console.log(cartPrice);
+}
+
+const reducer = (accumulator, currentValue) => accumulator + currentValue;
+const totalPrice = getCartTotalPrice.reduce(reducer,0);
+console.log(totalPrice);
+
+let showTotalPrice = document.getElementById('totalPrice');
+showTotalPrice.textContent = totalPrice;
 
 
 
-
-
-
-
-
-
-
+// ******************* Avoir le nombre d'article total du panier ***************
 
 
 
