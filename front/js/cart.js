@@ -63,11 +63,11 @@ for (let k = 0; k < deleteButton.length; k++){
 
         let deleteById = cart[k].id;
         let deleteByColors = cart[k].colors;
-        console.log(deleteById);
-        console.log(deleteByColors);
+        console.log('ID du produit supprimé est le suivant :',deleteById);
+        console.log('La couleur du produit supprimé est le suivant :',deleteByColors);
         
         cart = cart.filter( kanap => kanap.id !== deleteById || kanap.colors !== deleteByColors);
-        console.log(cart);
+        console.log('Le nouveau panier est le suivant :',cart);
 
         localStorage.setItem(key, JSON.stringify(cart));
         alert('Votre Kanap a bien été supprimé !');
