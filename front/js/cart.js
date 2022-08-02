@@ -98,12 +98,12 @@ for ( let j = 0; j < cart.length; j++ ){
 
     let cartPrice = results[j].price*cart[j].quantity;
     getCartTotalPrice.push(cartPrice);
-    console.log(cartPrice);
+    console.log('Le prix de ce produit est de :',cartPrice);
 }
 
-const reducer = (accumulator, currentValue) => accumulator + currentValue;
-const totalPrice = getCartTotalPrice.reduce(reducer,0);
-console.log(totalPrice);
+const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
+const totalPrice = getCartTotalPrice.reduce(reducerPrice, 0);
+console.log('Le prix total est de',totalPrice);
 
 let showTotalPrice = document.getElementById('totalPrice');
 showTotalPrice.textContent = totalPrice;
@@ -112,8 +112,21 @@ showTotalPrice.textContent = totalPrice;
 
 // ******************* Avoir le nombre d'article total du panier ***************
 
+let getCartTotalKanap = [];
 
+for ( let m = 0; m < cart.length; m++ ){
 
+    let cartTotalKanap = cart[m].quantity;
+    getCartTotalKanap.push(cartTotalKanap);
+    console.log('la quantité de ce produit est de :',cartTotalKanap);
+}
+
+const reducerQuantity = (accumulator, currentValue) => accumulator + currentValue;
+const totalQuantity = getCartTotalKanap.reduce(reducerQuantity, 0);
+console.log('la quantité Total est de', totalQuantity);
+
+let showTotalQuantity = document.getElementById('totalQuantity');
+showTotalQuantity.textContent = totalQuantity;
 
 
 
