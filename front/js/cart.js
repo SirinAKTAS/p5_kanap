@@ -85,9 +85,7 @@ let itemQuantity = document.querySelectorAll('.itemQuantity');
 console.log(itemQuantity);
 
 
-itemQuantity.addEventListener("change", (e) => {
-
-})
+//itemQuantity.addEventListener("change", (e) => {})
 
 
 
