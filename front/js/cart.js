@@ -5,9 +5,10 @@ console.log(cart);
 // ************* Affichage Produit ***********
 
 const zoneProducts = document.getElementById('cart__items');
-const arrayIds = cart.map(product => product.id);
 
 // On a besoin de récupérer la donnée des éléments situés dans le panier
+const arrayIds = cart.map(product => product.id);
+
 let results = await Promise.all(
     arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
 );
@@ -50,6 +51,25 @@ if(!cart || cart == 0){
 
     zoneProducts.innerHTML = cartStructure;
 }
+// ******************* Modifier la quantité depuis le panier ******************
+
+let quantityInputs = document.querySelectorAll('.itemQuantity');
+console.log(quantityInputs);
+
+for ( let y =0; y < quantityInputs.length; y++) {
+    let input = quantityInputs[y];
+    input.addEventListener('change', (e) => {
+        let input = e.target;
+        console.log(input);
+        if (isNaN(input.value) || input.value <= 0){
+            input.value = 1;
+        }
+        cart[y].quantity = Number(input.value);
+        console.log(cart);
+        localStorage.setItem(key, JSON.stringify(cart));
+        window.location.href = "cart.html";
+    })
+}
 
 
 // ******************* Supprimer un Kanap du panier ***************
@@ -78,19 +98,7 @@ for (let k = 0; k < deleteButton.length; k++){
 
 
 
-
-// ******************* Modifier la quantité depuis le panier ******************
-
-let itemQuantity = document.querySelectorAll('.itemQuantity');
-console.log(itemQuantity);
-
-
-//itemQuantity.addEventListener("change", (e) => {})
-
-
-
 // ******************* Avoir le prix total du panier ***********************
-
 
 let getCartTotalPrice = [];
 
@@ -127,6 +135,8 @@ console.log('la quantité Total est de', totalQuantity);
 
 let showTotalQuantity = document.getElementById('totalQuantity');
 showTotalQuantity.textContent = totalQuantity;
+
+
 
 
 
