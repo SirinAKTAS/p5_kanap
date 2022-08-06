@@ -1,6 +1,5 @@
 const key = 'Products';
 let cart = JSON.parse(localStorage.getItem(key));
-console.log(cart);
 
 // ************* Affichage Produit ***********
 
@@ -13,15 +12,20 @@ let results = await Promise.all(
     arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
 );
 
-if(!cart || cart == 0){
+if(!cart || cart === 0){
     zoneProducts.innerHTML = ` 
         <div class="cartAndFormContainer">
             <h2>Votre panier est vide, merci d'ajouter au moins un article pour qu'on puisse passer à la commande.</h2>
         </div>
     `;
+    let showTotalPrice = document.getElementById('totalPrice');
+    showTotalPrice.textContent = 0;
+    let showTotalQuantity = document.getElementById('totalQuantity');
+    showTotalQuantity.textContent = 0;
+
+
 } else {
     let cartStructure = '';
-
 
     for (let i = 0; i < cart.length; i++) {
         cartStructure += `
@@ -33,7 +37,7 @@ if(!cart || cart == 0){
                   <div class="cart__item__content__description">
                     <h2>${cart[i].name}</h2>
                     <p>${cart[i].colors}</p>
-                    <p>${results[i].price*cart[i].quantity} €</p>
+                    <p>${results[i].price} €</p>
                   </div>
                   <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -53,88 +57,75 @@ if(!cart || cart == 0){
 }
 // ******************* Modifier la quantité depuis le panier ******************
 
-let quantityInputs = document.querySelectorAll('.itemQuantity');
-console.log(quantityInputs);
-
-for ( let y =0; y < quantityInputs.length; y++) {
-    let input = quantityInputs[y];
-    input.addEventListener('change', (e) => {
-        let input = e.target;
-        console.log(input);
-        if (isNaN(input.value) || input.value <= 0){
-            input.value = 1;
+const itemsQuantity = document.querySelectorAll('.itemQuantity');
+itemsQuantity.forEach((itemQuantity, i) => {
+    itemQuantity.addEventListener('change', (e) => {
+        if (isNaN(itemQuantity.value) || itemQuantity.value <= 0){
+            itemQuantity.value = 1;
         }
-        cart[y].quantity = Number(input.value);
-        console.log(cart);
+
+        cart[i].quantity = Number(itemQuantity.value);
         localStorage.setItem(key, JSON.stringify(cart));
-        window.location.href = "cart.html";
+
+        computeTotalPrice();
+        computeTotalQuantity();
     })
+});
+
+function computeTotalPrice() {
+    let getCartTotalPrice = [];
+
+    for ( let j = 0; j < cart.length; j++ ){
+        let cartPrice = results[j].price*cart[j].quantity;
+        getCartTotalPrice.push(cartPrice);
+    }
+    
+    const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
+    const totalPrice = getCartTotalPrice.reduce(reducerPrice, 0);
+    
+    let showTotalPrice = document.getElementById('totalPrice');
+    showTotalPrice.textContent = totalPrice;
 }
 
+function computeTotalQuantity() {
+    let getCartTotalKanap = [];
+
+    for ( let m = 0; m < cart.length; m++ ){
+    
+        let cartTotalKanap = cart[m].quantity;
+        getCartTotalKanap.push(cartTotalKanap);
+    }
+    
+    const reducerQuantity = (accumulator, currentValue) => accumulator + currentValue;
+    const totalQuantity = getCartTotalKanap.reduce(reducerQuantity, 0);
+    
+    let showTotalQuantity = document.getElementById('totalQuantity');
+    showTotalQuantity.textContent = totalQuantity;
+}
 
 // ******************* Supprimer un Kanap du panier ***************
 let deleteButton = document.querySelectorAll('.deleteItem');
-console.log(deleteButton);
 
-for (let k = 0; k < deleteButton.length; k++){
-
+for (let k = 0; k < deleteButton.length; k++) {
     deleteButton[k].addEventListener("click", (e) => {
         e.preventDefault();
 
-        let deleteById = cart[k].id;
-        let deleteByColors = cart[k].colors;
-        console.log('ID du produit supprimé est le suivant :',deleteById);
-        console.log('La couleur du produit supprimé est le suivant :',deleteByColors);
-        
-        cart = cart.filter( kanap => kanap.id !== deleteById || kanap.colors !== deleteByColors);
-        console.log('Le nouveau panier est le suivant :',cart);
+        const article = deleteButton[k].closest('article');
+
+        cart = cart.filter( kanap => kanap.id !== cart[k].id || kanap.colors !== cart[k].colors);
 
         localStorage.setItem(key, JSON.stringify(cart));
         alert('Votre Kanap a bien été supprimé !');
-        window.location.href = "cart.html";
+        article.remove();
+        
+        computeTotalPrice();
+        computeTotalQuantity();
     })
 };
 
 
-
-
-// ******************* Avoir le prix total du panier ***********************
-
-let getCartTotalPrice = [];
-
-for ( let j = 0; j < cart.length; j++ ){
-
-    let cartPrice = results[j].price*cart[j].quantity;
-    getCartTotalPrice.push(cartPrice);
-    console.log('Le prix de ce produit est de :',cartPrice);
-}
-
-const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
-const totalPrice = getCartTotalPrice.reduce(reducerPrice, 0);
-console.log('Le prix total est de',totalPrice);
-
-let showTotalPrice = document.getElementById('totalPrice');
-showTotalPrice.textContent = totalPrice;
-
-
-
-// ******************* Avoir le nombre d'article total du panier ***************
-
-let getCartTotalKanap = [];
-
-for ( let m = 0; m < cart.length; m++ ){
-
-    let cartTotalKanap = cart[m].quantity;
-    getCartTotalKanap.push(cartTotalKanap);
-    console.log('la quantité de ce produit est de :',cartTotalKanap);
-}
-
-const reducerQuantity = (accumulator, currentValue) => accumulator + currentValue;
-const totalQuantity = getCartTotalKanap.reduce(reducerQuantity, 0);
-console.log('la quantité Total est de', totalQuantity);
-
-let showTotalQuantity = document.getElementById('totalQuantity');
-showTotalQuantity.textContent = totalQuantity;
+computeTotalPrice();
+computeTotalQuantity();
 
 
 
@@ -271,7 +262,7 @@ function postForm (){
     const city = document.getElementById('city');
     const email = document.getElementById('email');
 
-  
+
 
     /**    buttonOrder.addEventListener('click', () => {
                 let contact = {

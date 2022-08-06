@@ -17,7 +17,6 @@ function init() {
             }
         })
         .then(function(product) {
-            console.log(product);
             displayProductData(product);
         })
         .catch(function(err){
@@ -92,8 +91,6 @@ function getCart(){
 function processLocalStorage(object) {
     let cart = getCart();
     let sortedArray = Array.from(cart).find(product => product.id === object.id && product.colors === object.colors);
-    const quantityChoose = object.quantity;
-    console.log(quantityChoose);
 
     if (cart && sortedArray) {
         sortedArray.quantity += object.quantity;
@@ -103,8 +100,6 @@ function processLocalStorage(object) {
         localStorage.setItem(key, JSON.stringify(cart));
     }
 
-    console.log(object);
-    console.log(object.id);
 }
 
 init();
