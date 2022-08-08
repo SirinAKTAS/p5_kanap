@@ -1,29 +1,25 @@
 const key = 'Products';
 let cart = JSON.parse(localStorage.getItem(key));
 
-// ************* Affichage Produit ***********
+// ************* Affichage Produit, localstorage vide ***********
 
 const zoneProducts = document.getElementById('cart__items');
 
+
+showWhenEmpty();
+
+
+
 // On a besoin de récupérer la donnée des éléments situés dans le panier
 const arrayIds = cart.map(product => product.id);
+console.log(arrayIds);
 
 let results = await Promise.all(
     arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
 );
 
 if(!cart || cart === 0){
-    zoneProducts.innerHTML = ` 
-        <div class="cartAndFormContainer">
-            <h2>Votre panier est vide, merci d'ajouter au moins un article pour qu'on puisse passer à la commande.</h2>
-        </div>
-    `;
-    let showTotalPrice = document.getElementById('totalPrice');
-    showTotalPrice.textContent = 0;
-    let showTotalQuantity = document.getElementById('totalQuantity');
-    showTotalQuantity.textContent = 0;
-
-
+    showWhenEmpty()
 } else {
     let cartStructure = '';
 
@@ -103,13 +99,24 @@ function computeTotalQuantity() {
     showTotalQuantity.textContent = totalQuantity;
 }
 
+
+function showWhenEmpty(){
+    zoneProducts.innerHTML = ` 
+        <div class="cartAndFormContainer">
+            <h2>Votre panier est vide, merci d'ajouter au moins un article pour qu'on puisse passer à la commande.</h2>
+        </div>
+    `;
+    let showTotalPrice = document.getElementById('totalPrice');
+    showTotalPrice.textContent = 0;
+    let showTotalQuantity = document.getElementById('totalQuantity');
+    showTotalQuantity.textContent = 0;
+}
 // ******************* Supprimer un Kanap du panier ***************
 let deleteButton = document.querySelectorAll('.deleteItem');
 
 for (let k = 0; k < deleteButton.length; k++) {
     deleteButton[k].addEventListener("click", (e) => {
-        e.preventDefault();
-
+        
         const article = deleteButton[k].closest('article');
 
         cart = cart.filter( kanap => kanap.id !== cart[k].id || kanap.colors !== cart[k].colors);
@@ -120,6 +127,7 @@ for (let k = 0; k < deleteButton.length; k++) {
         
         computeTotalPrice();
         computeTotalQuantity();
+
     })
 };
 
@@ -238,12 +246,12 @@ const validEmail = function() {
     let emailErrorMsg = document.getElementById('emailErrorMsg');
 
     if (emailRegExp.test(form.email.value)) {
-        emailErrorMsg.innerHTML ='Adresse Email Valide';
+        emailErrorMsg.innerHTML ='Adresse email valide';
         emailErrorMsg.classList.remove('msg-invalide');
         emailErrorMsg.classList.add('msg-valide');
         return true;
     } else {
-        emailErrorMsg.innerHTML ='Adresse Email Non Valide';
+        emailErrorMsg.innerHTML ='Adresse email non valide';
         emailErrorMsg.classList.remove('msg-valide');
         emailErrorMsg.classList.add('msg-invalide');
         return false;
@@ -253,25 +261,62 @@ const validEmail = function() {
 
 // **************** Passer la commande ******************
 
-
-function postForm (){
-    const buttonOrder = document.getElementById('order');
-    const firstName = document.getElementById('firstName');
-    const lastName = document.getElementById('lastName');
-    const address = document.getElementById('address');
-    const city = document.getElementById('city');
-    const email = document.getElementById('email');
+const buttonOrder = document.getElementById('order');
+const firstName = document.getElementById('firstName');
+const lastName = document.getElementById('lastName');
+const address = document.getElementById('address');
+const city = document.getElementById('city');
+const email = document.getElementById('email');
 
 
+buttonOrder.addEventListener('click', (e) => {
+    localStorage.removeItem(key);
+    e.preventDefault();
+    
+    submitButton();
+});
 
-    /**    buttonOrder.addEventListener('click', () => {
-                let contact = {
-                    firstName: firstName.value,
-                    lastName: lastName.value,
-                    address: address.value,
-                    city: city.value,
-                    email: email.value
-                };
-    })
-     **/
+function submitButton() {
+    const form = document.querySelector('.cart__order__form');
+    const body = sendOrder();
+    if (cart.length === 0) {
+        alert('Le panier est vide');
+    }
+
+    fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        })
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+    
+
+}
+
+
+function sendOrder(){
+    let body = { 
+            contact: {
+                firstName: firstName.value,
+                lastName: lastName.value,
+                address: address.value,
+                city: city.value,
+                email: email.value    
+            },
+            products: getIdFromLocal()
+        }
+    return body
+};
+
+function getIdFromLocal(){
+    const ids = [];
+    for (let i = 0; i < cart.length; i++){
+        const key = cart[i].id;
+        ids.push(key);
+        console.log(key);
+    }
+    return ids
 }
