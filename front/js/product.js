@@ -1,8 +1,12 @@
 const key = 'Products';
+
+// récupération de l'id présent dans l'url après avoir cliquer sur un produit sur la page index
 const params = new URLSearchParams(window.location.search);
 const id = params.get('_id');
+
 const couleurOption = document.getElementById('colors');
 
+// function qui permet dans un premier temps de récupérer et afficher les produits
 function init() {
     const colors = document.getElementById('colors');
     const button = document.getElementById('addToCart');
@@ -10,6 +14,7 @@ function init() {
     const productName = document.getElementById('title');
     const description = document.getElementById('description');
 
+    // appelle fetch pour récupérer le produit par rapport à son id qui est présent dans l'url de la page
     fetch(`http://localhost:3000/api/products/${id}`)
         .then(function(res) {
             if(res.ok){
@@ -23,6 +28,7 @@ function init() {
             // Une erreur est survenue
         });
 
+    // event de type change pour disable ou non le bouton pour ajouter au panier si y a une couleur de sélectionner
     colors.addEventListener('change', function () {
         const colorsValue = this.value;
         const quantityValue = Number(itemQuantity.value);
@@ -33,7 +39,8 @@ function init() {
             button.disabled = true;
         }
     });
-
+    
+    // event de type change pour disable ou non le bouton pour ajouter au panier si y a une quantité de sélectionner
     itemQuantity.addEventListener('change', function () {
         const colorsValue = colors.value;
         const quantityValue = Number(this.value);
@@ -45,6 +52,7 @@ function init() {
         }
     });
 
+    // event de type clik pour créé un object avec les valeurs dont on a besooin puis d'ajouter l'object dans le localstorage
     button.addEventListener('click', () => {
         const image = document.getElementById('image');
 
@@ -63,6 +71,7 @@ function init() {
     });
 }
 
+// fonction pour l'affiche du produit présent dans l'url
 function displayProductData(product) {
     let imageAlt = document.querySelector("article div.item__img");
     let title = document.getElementById('title');
@@ -79,6 +88,7 @@ function displayProductData(product) {
     }
 }
 
+// fonction pour récupérer les éléments du localstorage, si il est vide on créé un tableau vide
 function getCart(){
     let cart = localStorage.getItem(key);
     if (cart == null) {
@@ -88,6 +98,9 @@ function getCart(){
     }
 }
 
+// fonction pour permettre d'ajouter un élément dans le localstorage, si le produit que nous voulons 
+// ajouter au localstorage existe déjà ( même ID et même COULEUR ) on modifie alors sa quantité,
+// sinon on créé un nouveau produit dans le tableau présent dans le localstorage
 function processLocalStorage(object) {
     let cart = getCart();
     let sortedArray = Array.from(cart).find(product => product.id === object.id && product.colors === object.colors);

@@ -12,7 +12,6 @@ showWhenEmpty();
 
 // On a besoin de récupérer la donnée des éléments situés dans le panier
 const arrayIds = cart.map(product => product.id);
-console.log(arrayIds);
 
 let results = await Promise.all(
     arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
@@ -55,7 +54,10 @@ if(!cart || cart === 0){
 
 const itemsQuantity = document.querySelectorAll('.itemQuantity');
 itemsQuantity.forEach((itemQuantity, i) => {
+    // event de type change sur la quantité pour permettre une modification de la quantité du produit
+    // depuis la page panier, puis on enregistre la nouvelle valeur dans le localstorage
     itemQuantity.addEventListener('change', (e) => {
+        // si la valeur n'est pas un nomber ou inférieur ou égale à 0 alors la valeur par défaut se met à 1
         if (isNaN(itemQuantity.value) || itemQuantity.value <= 0){
             itemQuantity.value = 1;
         }
@@ -68,6 +70,8 @@ itemsQuantity.forEach((itemQuantity, i) => {
     })
 });
 
+// calcul du prix total du panier, on récupère d'abord dans un tableau les prix de chaque produit (selon leurs quantité)
+// présent sur la page panier, puis avec la méthode reduce on calcule les valeurs qu'on a récupérer
 function computeTotalPrice() {
     let getCartTotalPrice = [];
 
@@ -83,6 +87,8 @@ function computeTotalPrice() {
     showTotalPrice.textContent = totalPrice;
 }
 
+// calcul de la quantité total du panier, on récupère d'abord dans un tableau les quantité de chaque produit
+// présent sur la page panier, puis avec la méthode reduce on calcule les valeurs qu'on a récupérer
 function computeTotalQuantity() {
     let getCartTotalKanap = [];
 
@@ -99,7 +105,7 @@ function computeTotalQuantity() {
     showTotalQuantity.textContent = totalQuantity;
 }
 
-
+// fonction pour afficher ce qui doit être afficher lorsque le localstorage est vide
 function showWhenEmpty(){
     zoneProducts.innerHTML = ` 
         <div class="cartAndFormContainer">
@@ -112,6 +118,10 @@ function showWhenEmpty(){
     showTotalQuantity.textContent = 0;
 }
 // ******************* Supprimer un Kanap du panier ***************
+
+
+// on récupère tout les ".deleteItem" puis on utilise un event de type click pour pouvoir supprimer l'article le plus proche du bouton
+// selon l'id et la couleur grâce à la méthode filter
 let deleteButton = document.querySelectorAll('.deleteItem');
 
 for (let k = 0; k < deleteButton.length; k++) {
@@ -146,11 +156,13 @@ computeTotalQuantity();
 let form = document.querySelector('#formOrder');
 // **************** Validation Prenom ****************
 
-
+// event de type change qui fais appel à une fonction lors du changement de la value du champ
 form.firstName.addEventListener('change', function() {
     validFirstName(this);
 });
 
+// fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
+// message d'erreur ou non lorsque le champ est correct ou non
 const validFirstName = function() {
     let firstNameRegExp = /^[a-zA-Z\-]+$/;
     let firstNameErrorMsg = document.getElementById('firstNameErrorMsg');
@@ -170,10 +182,13 @@ const validFirstName = function() {
 
 // **************** Validation Nom ****************
 
+// event de type change qui fais appel à une fonction lors du changement de la value du champ
 form.lastName.addEventListener('change', function() {
     validLastName(this);
 });
 
+// fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
+// message d'erreur ou non lorsque le champ est correct ou non
 const validLastName = function() {
     let lastNameRegExp = /^[a-zA-Z\-]+$/;
     let lastNameErrorMsg = document.getElementById('lastNameErrorMsg');
@@ -192,10 +207,13 @@ const validLastName = function() {
 };
 // **************** Validation Adresse ****************
 
+// event de type change qui fais appel à une fonction lors du changement de la value du champ
 form.address.addEventListener('change', function() {
     validAddress(this);
 });
 
+// fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
+// message d'erreur ou non lorsque le champ est correct ou non
 const validAddress = function() {
     let addressRegExp = /(\d{1,}) [a-zA-Z0-9\s]+(\.)? [a-zA-Z]+(\,)?/;
     let addressErrorMsg = document.getElementById('addressErrorMsg');
@@ -214,10 +232,13 @@ const validAddress = function() {
 };
 // **************** Validation Ville ****************
 
+// event de type change qui fais appel à une fonction lors du changement de la value du champ
 form.city.addEventListener('change', function() {
     validCity(this);
 });
 
+// fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
+// message d'erreur ou non lorsque le champ est correct ou non
 const validCity = function() {
     let cityRegExp = /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/;
     let cityErrorMsg = document.getElementById('cityErrorMsg');
@@ -237,10 +258,13 @@ const validCity = function() {
 
 // **************** Validation Email ******************
 
+// event de type change qui fais appel à une fonction lors du changement de la value du champ
 form.email.addEventListener('change', function() {
     validEmail(this);
 });
 
+// fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
+// message d'erreur ou non lorsque le champ est correct ou non
 const validEmail = function() {
     let emailRegExp = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
     let emailErrorMsg = document.getElementById('emailErrorMsg');
@@ -268,7 +292,7 @@ const address = document.getElementById('address');
 const city = document.getElementById('city');
 const email = document.getElementById('email');
 
-
+// event de type clic qui permet d'envoyer les données avec la méthode POST et en mm temps supprimer les éléments du localstorage
 buttonOrder.addEventListener('click', (e) => {
     localStorage.removeItem(key);
     e.preventDefault();
@@ -276,13 +300,16 @@ buttonOrder.addEventListener('click', (e) => {
     submitButton();
 });
 
+// fonction lors du click du bouton "Commander"
+// le bouton ne fonction pas si le panier est vide et que les valeurs des champs du formulaire sont incorrect
 function submitButton() {
-    const form = document.querySelector('.cart__order__form');
     const body = sendOrder();
-    if (cart.length === 0) {
-        alert('Le panier est vide');
-    }
+    if (cart.length === 0 || validEmail() == false || validCity() == false || validAddress() == false || validFirstName() == false || validLastName() == false) {
+        alert('le panier est vide et/ou un champ du formulaire n\'est pas bien remplis');
+        return
+    } else {
 
+// envoi des données avec fetch et la méthode POST
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         body: JSON.stringify(body),
@@ -291,12 +318,17 @@ function submitButton() {
         },
         })
     .then((res) => res.json())
-    .then((data) => console.log(data))
+    .then((data) => {
+// après l'envoi des données on récupère l'orderId qu'on nous fournis grâce à la méthode POST puis on est redirigés 
+// sur la page de confirmation avec l'orderId présent dans l'url
+        const orderId = data.orderId;
+        window.location.href = "/front/html/confirmation.html" + "?orderId=" + orderId;
+    })
     
-
+    }
 }
 
-
+// fonction qui créé un object contenant les valeurs dont on a besoin, càd les valeurs du formulaire et les produits présent dans le panier
 function sendOrder(){
     let body = { 
             contact: {
@@ -311,12 +343,12 @@ function sendOrder(){
     return body
 };
 
+// fonction qui permet de récupérer les id de chaque produit présent dans le panier puis de les enregistrer dans un array
 function getIdFromLocal(){
     const ids = [];
     for (let i = 0; i < cart.length; i++){
         const key = cart[i].id;
         ids.push(key);
-        console.log(key);
     }
     return ids
 }
