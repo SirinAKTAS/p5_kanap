@@ -3,12 +3,7 @@ let cart = JSON.parse(localStorage.getItem(key));
 
 // ************* Affichage Produit, localstorage vide ***********
 
-const zoneProducts = document.getElementById('cart__items');
-
-
-showWhenEmpty();
-
-
+const itemsContainer = document.getElementById('cart__items');
 
 // On a besoin de récupérer la donnée des éléments situés dans le panier
 const arrayIds = cart.map(product => product.id);
@@ -18,38 +13,50 @@ let results = await Promise.all(
 );
 
 if(!cart || cart === 0){
-    showWhenEmpty()
+    showWhenEmpty();
 } else {
-    let cartStructure = '';
+    const fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < cart.length; i++) {
-        cartStructure += `
-            <article class="cart__item" data-id="${cart[i].id}" data-colors="${cart[i].colors}" data-price="${results[i].price}">
-                <div class="cart__item__img">
-                  <img src="${cart[i].imageUrl}" alt="${cart[i].altTxt}">
-                </div>
-                <div class="cart__item__content">
-                  <div class="cart__item__content__description">
-                    <h2>${cart[i].name}</h2>
-                    <p>${cart[i].colors}</p>
-                    <p>${results[i].price} €</p>
-                  </div>
-                  <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                      <p>Qté : </p>
-                      <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cart[i].quantity}">
-                    </div>
-                    <div class="cart__item__content__settings__delete">
-                      <p class="deleteItem">Supprimer</p>
-                    </div>
-                  </div>
-                </div>
-              </article>
-        `;
+    for (let product of cart) {
+        const element = createProduct(product);
+        fragment.appendChild(element);
     }
 
-    zoneProducts.innerHTML = cartStructure;
+    itemsContainer.appendChild(fragment);
+
 }
+
+
+function createProduct(cart) {
+    const template = document.createElement('template');
+    template.innerHTML = `
+    <article class="cart__item" data-id="${cart.id}" data-colors="${cart.colors}" data-price="${results.price}">
+        <div class="cart__item__img">
+          <img src="${cart.imageUrl}" alt="${cart.altTxt}">
+        </div>
+        <div class="cart__item__content">
+          <div class="cart__item__content__description">
+            <h2>${cart.name}</h2>
+            <p>${cart.colors}</p>
+            <p>${results.price} €</p>
+          </div>
+          <div class="cart__item__content__settings">
+            <div class="cart__item__content__settings__quantity">
+              <p>Qté : </p>
+              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cart.quantity}">
+            </div>
+            <div class="cart__item__content__settings__delete">
+              <p class="deleteItem">Supprimer</p>
+            </div>
+          </div>
+        </div>
+      </article>
+`;
+    return template.content.firstElementChild;
+}
+
+
+
 // ******************* Modifier la quantité depuis le panier ******************
 
 const itemsQuantity = document.querySelectorAll('.itemQuantity');
@@ -107,9 +114,9 @@ function computeTotalQuantity() {
 
 // fonction pour afficher ce qui doit être afficher lorsque le localstorage est vide
 function showWhenEmpty(){
-    zoneProducts.innerHTML = ` 
+    itemsContainer.innerHTML = ` 
         <div class="cartAndFormContainer">
-            <h2>Votre panier est vide, merci d'ajouter au moins un article pour qu'on puisse passer à la commande.</h2>
+            <h2>Votre panier est vide, merci d'ajouter au moins un kanap.</h2>
         </div>
     `;
     let showTotalPrice = document.getElementById('totalPrice');
