@@ -1,95 +1,129 @@
 const key = 'Products';
-let cart = JSON.parse(localStorage.getItem(key));
+const itemsContainer = document.getElementById('cart__items');
+
+let someProducts = []
+let products = JSON.parse(localStorage.getItem(key));
+let productsFromApi = []
 
 // ************* Affichage Produit, localstorage vide ***********
 
-const itemsContainer = document.getElementById('cart__items');
-
-// On a besoin de récupérer la donnée des éléments situés dans le panier
-const arrayIds = cart.map(product => product.id);
-
-let results = await Promise.all(
-    arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
-);
-
-if(!cart || cart === 0){
+if(!products){
     showWhenEmpty();
 } else {
+    init();
+}
+
+async function init() {
+    // On a besoin de récupérer la donnée des éléments situés dans le panier
+    const arrayIds = products.map(product => product.id);
     const fragment = document.createDocumentFragment();
 
-    for (let product of cart) {
-        const element = createProduct(product);
+    productsFromApi = await Promise.all(
+        arrayIds.map(id => fetch(`http://localhost:3000/api/products/${id}`).then(response => response.json()))
+    );
+
+    for (let i = 0; i < products.length; i++) {
+        const element = createProduct(i);
         fragment.appendChild(element);
     }
 
     itemsContainer.appendChild(fragment);
 
+    // Modifier la quantité depuis le panier
+    const itemsQuantity = document.querySelectorAll('.itemQuantity');
+    itemsQuantity.forEach((itemQuantity, i) => {
+        // event de type change sur la quantité pour permettre une modification de la quantité du produit
+        // depuis la page panier, puis on enregistre la nouvelle valeur dans le localstorage
+        itemQuantity.addEventListener('change', (e) => {
+            // si la valeur n'est pas un nomber ou inférieur ou égale à 0 alors la valeur par défaut se met à 1
+            if (isNaN(itemQuantity.value) || itemQuantity.value <= 0){
+                itemQuantity.value = 1;
+            }
+
+            products[i].quantity = Number(itemQuantity.value);
+
+            computeTotalPrice();
+            computeTotalQuantity();
+            localStorage.setItem(key, JSON.stringify(products));
+        })
+    });
+
+    // on récupère tout les ".deleteItem" puis on utilise un event de type click pour pouvoir supprimer l'article le plus proche du bouton
+    // selon l'id et la couleur grâce à la méthode filter
+    const deleteItems = document.querySelectorAll('.deleteItem');
+    deleteItems.forEach((deleteItem) => {
+        deleteItem.addEventListener("click", () => {
+            const article = deleteItem.closest('article');
+            let totalProducts = products.length;
+
+            if (totalProducts == 1){
+                article.remove();
+                showWhenEmpty();
+                return localStorage.removeItem(key)
+            } else {
+                products = products.filter(product => {
+                    if (deleteItem.dataset.id != product.id || deleteItem.dataset.colors != product.colors){
+                        article.remove();
+                        return true
+                    }
+                })
+
+                localStorage.setItem(key, JSON.stringify(products));
+
+            }
+            computeTotalPrice();
+            computeTotalQuantity();
+    
+        });
+
+    });
+
+    computeTotalPrice();
+    computeTotalQuantity();
 }
 
-
-function createProduct(cart) {
+function createProduct(i) {
     const template = document.createElement('template');
     template.innerHTML = `
-    <article class="cart__item" data-id="${cart.id}" data-colors="${cart.colors}" data-price="${results.price}">
-        <div class="cart__item__img">
-          <img src="${cart.imageUrl}" alt="${cart.altTxt}">
-        </div>
-        <div class="cart__item__content">
-          <div class="cart__item__content__description">
-            <h2>${cart.name}</h2>
-            <p>${cart.colors}</p>
-            <p>${results.price} €</p>
-          </div>
-          <div class="cart__item__content__settings">
-            <div class="cart__item__content__settings__quantity">
-              <p>Qté : </p>
-              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cart.quantity}">
+        <article class="cart__item" data-id="${products[i].id}" data-colors="${products[i].colors}" data-price="${productsFromApi[i].price}">
+            <div class="cart__item__img">
+              <img src="${products[i].imageUrl}" alt="${products[i].altTxt}">
             </div>
-            <div class="cart__item__content__settings__delete">
-              <p class="deleteItem">Supprimer</p>
+            <div class="cart__item__content">
+              <div class="cart__item__content__description">
+                <h2>${products[i].name}</h2>
+                <p>${products[i].colors}</p>
+                <p>${productsFromApi[i].price} €</p>
+              </div>
+              <div class="cart__item__content__settings">
+                <div class="cart__item__content__settings__quantity">
+                  <p>Qté : </p>
+                  <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${products[i].quantity}">
+                </div>
+                <div class="cart__item__content__settings__delete">
+                  <p class="deleteItem" data-id="${products[i].id}" data-colors="${products[i].colors}">Supprimer</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </article>
-`;
+          </article>
+    `;
+
     return template.content.firstElementChild;
 }
-
-
-
-// ******************* Modifier la quantité depuis le panier ******************
-
-const itemsQuantity = document.querySelectorAll('.itemQuantity');
-itemsQuantity.forEach((itemQuantity, i) => {
-    // event de type change sur la quantité pour permettre une modification de la quantité du produit
-    // depuis la page panier, puis on enregistre la nouvelle valeur dans le localstorage
-    itemQuantity.addEventListener('change', (e) => {
-        // si la valeur n'est pas un nomber ou inférieur ou égale à 0 alors la valeur par défaut se met à 1
-        if (isNaN(itemQuantity.value) || itemQuantity.value <= 0){
-            itemQuantity.value = 1;
-        }
-
-        cart[i].quantity = Number(itemQuantity.value);
-        localStorage.setItem(key, JSON.stringify(cart));
-
-        computeTotalPrice();
-        computeTotalQuantity();
-    })
-});
 
 // calcul du prix total du panier, on récupère d'abord dans un tableau les prix de chaque produit (selon leurs quantité)
 // présent sur la page panier, puis avec la méthode reduce on calcule les valeurs qu'on a récupérer
 function computeTotalPrice() {
     let getCartTotalPrice = [];
 
-    for ( let j = 0; j < cart.length; j++ ){
-        let cartPrice = results[j].price*cart[j].quantity;
+    for ( let i = 0; i < products.length; i++){
+        let cartPrice = productsFromApi[i].price * products[i].quantity;
         getCartTotalPrice.push(cartPrice);
     }
-    
+
     const reducerPrice = (accumulator, currentValue) => accumulator + currentValue;
     const totalPrice = getCartTotalPrice.reduce(reducerPrice, 0);
-    
+
     let showTotalPrice = document.getElementById('totalPrice');
     showTotalPrice.textContent = totalPrice;
 }
@@ -97,19 +131,17 @@ function computeTotalPrice() {
 // calcul de la quantité total du panier, on récupère d'abord dans un tableau les quantité de chaque produit
 // présent sur la page panier, puis avec la méthode reduce on calcule les valeurs qu'on a récupérer
 function computeTotalQuantity() {
-    let getCartTotalKanap = [];
+    let array = [];
 
-    for ( let m = 0; m < cart.length; m++ ){
-    
-        let cartTotalKanap = cart[m].quantity;
-        getCartTotalKanap.push(cartTotalKanap);
+    for ( let i = 0; i < products.length; i++ ){
+        let totalCart = products[i].quantity;
+        array.push(totalCart);
     }
-    
+
     const reducerQuantity = (accumulator, currentValue) => accumulator + currentValue;
-    const totalQuantity = getCartTotalKanap.reduce(reducerQuantity, 0);
-    
+
     let showTotalQuantity = document.getElementById('totalQuantity');
-    showTotalQuantity.textContent = totalQuantity;
+    showTotalQuantity.textContent = array.reduce(reducerQuantity, 0);
 }
 
 // fonction pour afficher ce qui doit être afficher lorsque le localstorage est vide
@@ -120,37 +152,11 @@ function showWhenEmpty(){
         </div>
     `;
     let showTotalPrice = document.getElementById('totalPrice');
-    showTotalPrice.textContent = 0;
+    showTotalPrice.textContent = '0';
     let showTotalQuantity = document.getElementById('totalQuantity');
-    showTotalQuantity.textContent = 0;
+    showTotalQuantity.textContent = '0';
 }
-// ******************* Supprimer un Kanap du panier ***************
 
-
-// on récupère tout les ".deleteItem" puis on utilise un event de type click pour pouvoir supprimer l'article le plus proche du bouton
-// selon l'id et la couleur grâce à la méthode filter
-let deleteButton = document.querySelectorAll('.deleteItem');
-
-for (let k = 0; k < deleteButton.length; k++) {
-    deleteButton[k].addEventListener("click", (e) => {
-        
-        const article = deleteButton[k].closest('article');
-
-        cart = cart.filter( kanap => kanap.id !== cart[k].id || kanap.colors !== cart[k].colors);
-
-        localStorage.setItem(key, JSON.stringify(cart));
-        alert('Votre Kanap a bien été supprimé !');
-        article.remove();
-        
-        computeTotalPrice();
-        computeTotalQuantity();
-
-    })
-};
-
-
-computeTotalPrice();
-computeTotalQuantity();
 
 
 
@@ -222,7 +228,7 @@ form.address.addEventListener('change', function() {
 // fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
 // message d'erreur ou non lorsque le champ est correct ou non
 const validAddress = function() {
-    let addressRegExp = /(\d{1,}) [a-zA-Z0-9\s]+(\.)? [a-zA-Z]+(\,)?/;
+    let addressRegExp = /(\d+) [a-zA-Z\d\s]+(\.)? [a-zA-Z]+?/;
     let addressErrorMsg = document.getElementById('addressErrorMsg');
 
     if (addressRegExp.test(form.address.value)) {
@@ -273,7 +279,7 @@ form.email.addEventListener('change', function() {
 // fonction avec une expression régulière qui permet d'appliquer des conditions pour que le champs soit valide
 // message d'erreur ou non lorsque le champ est correct ou non
 const validEmail = function() {
-    let emailRegExp = /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/;
+    let emailRegExp = /^[a-zA-Z\d.-_]+@[a-zA-Z\d.-_]+[.][a-z]{2,10}$/;
     let emailErrorMsg = document.getElementById('emailErrorMsg');
 
     if (emailRegExp.test(form.email.value)) {
@@ -303,7 +309,7 @@ const email = document.getElementById('email');
 buttonOrder.addEventListener('click', (e) => {
     localStorage.removeItem(key);
     e.preventDefault();
-    
+
     submitButton();
 });
 
@@ -311,51 +317,51 @@ buttonOrder.addEventListener('click', (e) => {
 // le bouton ne fonction pas si le panier est vide et que les valeurs des champs du formulaire sont incorrect
 function submitButton() {
     const body = sendOrder();
-    if (cart.length === 0 || validEmail() == false || validCity() == false || validAddress() == false || validFirstName() == false || validLastName() == false) {
+    if (cart.length === 0 || validEmail() === false || validCity() === false || validAddress() === false || validFirstName() === false || validLastName() === false) {
         alert('le panier est vide et/ou un champ du formulaire n\'est pas bien remplis');
-        return
     } else {
 
 // envoi des données avec fetch et la méthode POST
-    fetch("http://localhost:3000/api/products/order", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-            "Content-Type": "application/json"
-        },
+        fetch("http://localhost:3000/api/products/order", {
+            method: "POST",
+            body: JSON.stringify(body),
+            headers: {
+                "Content-Type": "application/json"
+            },
         })
-    .then((res) => res.json())
-    .then((data) => {
-// après l'envoi des données on récupère l'orderId qu'on nous fournis grâce à la méthode POST puis on est redirigés 
+            .then((res) => res.json())
+            .then((data) => {
+// après l'envoi des données on récupère l'orderId qu'on nous fournis grâce à la méthode POST puis on est redirigés
 // sur la page de confirmation avec l'orderId présent dans l'url
-        const orderId = data.orderId;
-        window.location.href = "/front/html/confirmation.html" + "?orderId=" + orderId;
-    })
-    
+                const orderId = data.orderId;
+                window.location.href = "/front/html/confirmation.html" + "?orderId=" + orderId;
+            })
+
     }
 }
 
 // fonction qui créé un object contenant les valeurs dont on a besoin, càd les valeurs du formulaire et les produits présent dans le panier
 function sendOrder(){
-    let body = { 
-            contact: {
-                firstName: firstName.value,
-                lastName: lastName.value,
-                address: address.value,
-                city: city.value,
-                email: email.value    
-            },
-            products: getIdFromLocal()
-        }
-    return body
-};
+    return {
+        contact: {
+            firstName: firstName.value,
+            lastName: lastName.value,
+            address: address.value,
+            city: city.value,
+            email: email.value
+        },
+        products: getIdFromLocal()
+    };
+}
 
 // fonction qui permet de récupérer les id de chaque produit présent dans le panier puis de les enregistrer dans un array
 function getIdFromLocal(){
     const ids = [];
-    for (let i = 0; i < cart.length; i++){
-        const key = cart[i].id;
+
+    for (let i = 0; i < products.length; i++){
+        const key = products[i].id;
         ids.push(key);
     }
-    return ids
+
+    return ids;
 }
