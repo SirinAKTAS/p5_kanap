@@ -12,7 +12,10 @@ fetch("http://localhost:3000/api/products")
         // Une erreur est survenue
     });
 
-// insertion des éléments de l'api sur la page accueil, création d'un template du DOM pour chaque produit présent dans l'api
+/**
+ * Fonction qui permet d'éxécuter l'affichage des produits de l'API sur la page panier
+ * @param products - Tableau des produits de l'API
+ */
 function displayProducts(products) {
     // On récupére l'élément items situé dans le DOM
     const itemsContainer = document.getElementById('items');
@@ -27,8 +30,10 @@ function displayProducts(products) {
 }
 
 
-// Fonction de création des produits de manière dynamique
-
+/**
+ * Fonction pour créer un template du DOM pour chaque produit présent dans l'API dynamiquement
+ * @param product - Un template pour chaque produit obtenu depuis l'API
+ */
 function createProduct(product) {
     const template = document.createElement('template');
     template.innerHTML = `
