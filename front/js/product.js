@@ -4,13 +4,13 @@ const key = 'Products';
 const params = new URLSearchParams(window.location.search);
 const id = params.get('_id');
 
-const couleurOption = document.getElementById('colors');
+const couleurOption = document.getElementById('color-select');
 
 // Fonction qui permet dans un premier temps de récupérer et afficher les produits
 function init() {
-    const colors = document.getElementById('colors');
+    const colors = document.getElementById('color-select');
     const button = document.getElementById('addToCart');
-    const itemQuantity = document.getElementById('quantity');
+    const itemQuantity = document.getElementById('itemQuantity');
     const productName = document.getElementById('title');
     const description = document.getElementById('description');
 

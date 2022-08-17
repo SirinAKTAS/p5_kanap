@@ -33,8 +33,8 @@
           </a>
           <nav>
             <ul>
-              <a href="./index.html"><li>Accueil</li></a>
-              <a href="./cart.html"><li>Panier</li></a>
+              <li><a href="./index.html">Accueil</a></li>
+              <li><a href="./cart.html">Panier</a></li>
             </ul>
           </nav>
         </div>
@@ -44,7 +44,7 @@
 
     <main class="limitedWidthBlockContainer">
       <div class="limitedWidthBlock">
-        <section class="item">
+        <div class="item">
           <article>
             <div class="item__img">
               <!-- <img src="../images/logo.png" alt="Photographie d'un canapé"> -->
@@ -52,7 +52,7 @@
             <div class="item__content">
 
               <div class="item__content__titlePrice">
-                <h1 id="title"><!-- Nom du produit --></h1>
+                <h1 id="title"><!-- Nom du produit --> &nbsp;</h1>
                 <p>Prix : <span id="price"><!-- 42 --></span>€</p>
               </div>
 
@@ -64,16 +64,16 @@
               <div class="item__content__settings">
                 <div class="item__content__settings__color">
                   <label for="color-select">Choisir une couleur :</label>
-                  <select name="color-select" id="colors">
+                  <select name="color-select" id="color-select">
                       <option value="">--SVP, choisissez une couleur --</option>
-<!--                       <option value="vert">vert</option>
+                <!--  <option value="vert">vert</option>
                       <option value="blanc">blanc</option> -->
                   </select>
                 </div>
 
                 <div class="item__content__settings__quantity">
                   <label for="itemQuantity">Nombre d'article(s) (1-100) :</label>
-                  <input type="number" name="itemQuantity" min="1" max="100" value="0" id="quantity">
+                  <input type="number" name="itemQuantity" min="1" max="100" value="0" id="itemQuantity">
                 </div>
               </div>
 
@@ -83,7 +83,7 @@
 
             </div>
           </article>
-        </section>
+        </div>
       </div>
     </main>
     
@@ -106,7 +106,7 @@
       </div>
       <div class="limitedWidthBlockContainer footerSecondary">
         <div class="limitedWidthBlock">
-          <p>© Copyright 2021 - 2042 | Openclassrooms by Openclassrooms | All Rights Reserved | Powered by <3</p>
+          <p>© Copyright 2021 - 2042 | Openclassrooms by Openclassrooms | All Rights Reserved | Powered by Sirin</p>
         </div>
       </div>
     </footer>
