@@ -342,7 +342,6 @@ const email = document.getElementById('email');
 
 // Event de type clic qui permet d'envoyer les données avec la méthode POST et en mm temps supprimer les éléments du localstorage
 buttonOrder.addEventListener('click', (e) => {
-    localStorage.removeItem(key);
     e.preventDefault();
 
     submitButton();
@@ -375,11 +374,12 @@ function submitButton() {
         })
             .then((res) => res.json())
             .then((data) => {
-                // après l'envoi des données on récupère l'orderId qu'on nous fournis grâce à la méthode POST puis on est redirigés
-                // sur la page de confirmation avec l'orderId présent dans l'url
+                // Après l'envoi des données on récupère l'orderId qu'on nous fournis grâce à la méthode POST puis on est redirigés
+                // Sur la page de confirmation avec l'orderId présent dans l'url
                 const orderId = data.orderId;
                 window.location.href = "confirmation.html" + "?orderId=" + orderId;
             })
+        localStorage.removeItem(key);
 
     }
 }
