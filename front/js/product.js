@@ -7,7 +7,7 @@ const id = params.get('_id');
 const couleurOption = document.getElementById('color-select');
 
 // Fonction qui permet dans un premier temps de récupérer et afficher les produits
-function init() {
+(function init() {
     const colors = document.getElementById('color-select');
     const button = document.getElementById('addToCart');
     const itemQuantity = document.getElementById('itemQuantity');
@@ -39,7 +39,7 @@ function init() {
             button.disabled = true;
         }
     });
-    
+
     // Event de type change pour disable ou non le bouton pour ajouter au panier si y a une quantité de sélectionner
     itemQuantity.addEventListener('change', function () {
         const colorsValue = colors.value;
@@ -69,7 +69,7 @@ function init() {
         processLocalStorage(object);
         alert('Votre Kanap a bien été ajouté au panier !');
     });
-}
+})();
 
 /**
  * Fonction pour l'affiche du produit présent dans l'url
@@ -102,11 +102,11 @@ function getCart(){
 }
 
 /**
- * Fonction pour permettre d'ajouter un élément dans le localstorage, si le produit que nous voulons 
+ * Fonction pour permettre d'ajouter un élément dans le localstorage, si le produit que nous voulons
  * Ajouter au localstorage existe déjà ( même ID et même COULEUR ) on modifie alors sa quantité,
  * Sinon on créé un nouveau produit dans le tableau présent dans le localstorage
  * @param object - Désignation du produit présent dans le localStorage
- */ 
+ */
 function processLocalStorage(object) {
     let cart = getCart();
     let sortedArray = Array.from(cart).find(product => product.id === object.id && product.colors === object.colors);
@@ -120,5 +120,3 @@ function processLocalStorage(object) {
     }
 
 }
-
-init();

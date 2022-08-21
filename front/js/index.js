@@ -1,4 +1,4 @@
-// appel fetch pour récupérer les produits de l'api
+// Appel fetch pour récupérer les produits de l'api
 fetch("http://localhost:3000/api/products")
     .then(function(res) {
         if (res.ok) {
@@ -14,7 +14,7 @@ fetch("http://localhost:3000/api/products")
 
 /**
  * Fonction qui permet d'éxécuter l'affichage des produits de l'API sur la page panier
- * @param products - Tableau des produits de l'API
+ * @param {Array} products - Tableau des produits de l'API
  */
 function displayProducts(products) {
     // On récupére l'élément items situé dans le DOM
@@ -32,7 +32,7 @@ function displayProducts(products) {
 
 /**
  * Fonction pour créer un template du DOM pour chaque produit présent dans l'API dynamiquement
- * @param product - Un template pour chaque produit obtenu depuis l'API
+ * @param {Object} product - Un template pour chaque produit obtenu depuis l'API
  */
 function createProduct(product) {
     const template = document.createElement('template');
