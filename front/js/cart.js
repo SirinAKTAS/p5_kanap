@@ -53,28 +53,36 @@
          * Le plus proche du bouton
          * Selon l'id et la couleur grâce à la méthode filter
          */
-        const deleteItems = document.querySelectorAll('.deleteItem');
-        deleteItems.forEach((deleteItem, i) => {
-            deleteItem.addEventListener("click", () => {
-                const article = deleteItem.closest('article');
-
-                products = products.filter(product => {
-                    if (deleteItem.dataset.id !== product.id || deleteItem.dataset.colors !== product.colors) {
-                        article.remove();
-                        return true;
-                    }
-                });
-                productsFromApi.splice(i, 1);
-                localStorage.setItem(key, JSON.stringify(products));
-
-                if (products.length === 0) {
-                    showWhenEmpty();
-                }
-                computeTotalPrice();
-                computeTotalQuantity();
-
-            });
+         const deleteItems = document.querySelectorAll('.deleteItem');
+         deleteItems.forEach((deleteItem) => {
+             deleteItem.addEventListener("click", () => {
+                 const article = deleteItem.closest('article');
+                 let filteredIndex;
+         
+                 const filteredProduct = products.filter((product, index) => {
+                     if (product.id === article.dataset.id && product.colors === article.dataset.colors) {
+                         filteredIndex = index;
+         
+                         return true;
+                     }
+                 });
+         
+                 if (filteredProduct) {
+                     products.splice(filteredIndex, 1);
+                     productsFromApi.splice(filteredIndex, 1);
+                     localStorage.setItem(key, JSON.stringify(products));
+        
+                     article.remove();
+                     computeTotalPrice();
+                     computeTotalQuantity();
+                 }
+         
+                 if (products.length === 0) {
+                     showWhenEmpty();
+                 }
+             });
         });
+        
 
         computeTotalPrice();
         computeTotalQuantity();
