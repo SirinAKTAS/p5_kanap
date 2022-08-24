@@ -73,7 +73,7 @@ const couleurOption = document.getElementById('color-select');
 
 /**
  * Fonction pour l'affiche du produit présent dans l'url
- * @param product - Désignation du produit présent dans l'url
+ * @param {Object} product - Désignation du produit présent dans l'url
  */
 function displayProductData(product) {
     let imageAlt = document.querySelector("article div.item__img");
@@ -105,7 +105,7 @@ function getCart(){
  * Fonction pour permettre d'ajouter un élément dans le localstorage, si le produit que nous voulons
  * Ajouter au localstorage existe déjà ( même ID et même COULEUR ) on modifie alors sa quantité,
  * Sinon on créé un nouveau produit dans le tableau présent dans le localstorage
- * @param object - Désignation du produit présent dans le localStorage
+ * @param {Object} object - Désignation du produit présent dans le localStorage
  */
 function processLocalStorage(object) {
     let cart = getCart();
