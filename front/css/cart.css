@@ -149,6 +149,7 @@ h2 {
 
 .msg-invalide {
 	color: red;
+	font-weight: 600;
 }
 
 /***************/

@@ -11,8 +11,6 @@ const couleurOption = document.getElementById('color-select');
     const colors = document.getElementById('color-select');
     const button = document.getElementById('addToCart');
     const itemQuantity = document.getElementById('itemQuantity');
-    const productName = document.getElementById('title');
-    const description = document.getElementById('description');
 
     // Appelle fetch pour récupérer le produit par rapport à son id qui est présent dans l'url de la page
     fetch(`http://localhost:3000/api/products/${id}`)
@@ -33,10 +31,13 @@ const couleurOption = document.getElementById('color-select');
         const colorsValue = this.value;
         const quantityValue = Number(itemQuantity.value);
 
-        if (colorsValue && quantityValue !== 0) {
+        if (colorsValue && quantityValue > 0) {
             button.disabled = false;
         } else {
             button.disabled = true;
+        }
+        if (quantityValue < 0){
+            alert('Attention la quantité choisis est négatif!');
         }
     });
 
@@ -45,25 +46,23 @@ const couleurOption = document.getElementById('color-select');
         const colorsValue = colors.value;
         const quantityValue = Number(this.value);
 
-        if (colorsValue && quantityValue !== 0) {
+        if (colorsValue && quantityValue > 0) {
             button.disabled = false;
         } else {
             button.disabled = true;
+        }
+        if (quantityValue < 0){
+            alert('Attention la quantité choisis est négatif!');
         }
     });
 
     // Event de type clik pour créé un object avec les valeurs dont on a besooin puis d'ajouter l'object dans le localstorage
     button.addEventListener('click', () => {
-        const image = document.getElementById('image');
 
         let object = {
             id: id,
             quantity: Number(itemQuantity.value),
             colors: colors.value,
-            name: productName.innerHTML,
-            description: description.innerHTML,
-            imageUrl: image.src,
-            altTxt: image.alt
         }
 
         processLocalStorage(object);

@@ -118,11 +118,11 @@
         template.innerHTML = `
             <article class="cart__item" data-id="${products[i].id}" data-colors="${products[i].colors}" data-price="${productsFromApi[i].price}">
                 <div class="cart__item__img">
-                  <img src="${products[i].imageUrl}" alt="${products[i].altTxt}">
+                  <img src="${productsFromApi[i].imageUrl}" alt="${productsFromApi[i].altTxt}">
                 </div>
                 <div class="cart__item__content">
                   <div class="cart__item__content__description">
-                    <h2>${products[i].name}</h2>
+                    <h2>${productsFromApi[i].name}</h2>
                     <p>${products[i].colors}</p>
                     <p>${productsFromApi[i].price} €</p>
                   </div>
@@ -223,7 +223,7 @@
             firstNameErrorMsg.classList.add('msg-valide');
             return true;
         } else {
-            firstNameErrorMsg.innerHTML ='Prenom incorrect (attention aux chiffres et/ou caractère spéciaux)';
+            firstNameErrorMsg.innerHTML ='Prenom incorrect/vide (attention aux chiffres et/ou caractère spéciaux)';
             firstNameErrorMsg.classList.remove('msg-valide');
             firstNameErrorMsg.classList.add('msg-invalide');
             return false;
@@ -251,7 +251,7 @@
             lastNameErrorMsg.classList.add('msg-valide');
             return true;
         } else {
-            lastNameErrorMsg.innerHTML ='Nom incorrect (attention aux chiffres et/ou caractère spéciaux)';
+            lastNameErrorMsg.innerHTML ='Nom incorrect/vide (attention aux chiffres et/ou caractère spéciaux)';
             lastNameErrorMsg.classList.remove('msg-valide');
             lastNameErrorMsg.classList.add('msg-invalide');
             return false;
@@ -279,7 +279,7 @@
             addressErrorMsg.classList.add('msg-valide');
             return true;
         } else {
-            addressErrorMsg.innerHTML ='Adresse incorrect';
+            addressErrorMsg.innerHTML ='Adresse incorrect/vide';
             addressErrorMsg.classList.remove('msg-valide');
             addressErrorMsg.classList.add('msg-invalide');
             return false;
@@ -306,7 +306,7 @@
             cityErrorMsg.classList.add('msg-valide');
             return true;
         } else {
-            cityErrorMsg.innerHTML ='Ville incorrect';
+            cityErrorMsg.innerHTML ='Ville incorrect/vide';
             cityErrorMsg.classList.remove('msg-valide');
             cityErrorMsg.classList.add('msg-invalide');
             return false;
@@ -334,11 +334,11 @@
             emailErrorMsg.classList.add('msg-valide');
             return true;
         } else {
-            emailErrorMsg.innerHTML ='Adresse email non valide';
+            emailErrorMsg.innerHTML ='Adresse email non valide/vide';
             emailErrorMsg.classList.remove('msg-valide');
             emailErrorMsg.classList.add('msg-invalide');
             return false;
-        }
+        }        
     };
 
     // **************** Passer la commande ******************
@@ -361,9 +361,19 @@
      * Le bouton ne fonction pas si le panier est vide et que les valeurs des champs du formulaire sont incorrect
      */
     function submitButton() {
+
         if (!products || (products && products.length === 0)) return alert('le panier est vide');
 
         const body = JSON.stringify(sendOrder());
+
+        if (products.length === 0      ||
+            validEmail() === null      ||
+            validCity() === null       ||
+            validAddress() === null    ||
+            validFirstName() === null  ||
+            validLastName() === null) {
+                alert('le panier est vide et/ou un champ du formulaire n\'est pas bien rempli');
+            }
 
         if (products.length === 0       ||
             validEmail() === false      ||
